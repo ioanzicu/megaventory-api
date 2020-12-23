@@ -1,3 +1,4 @@
+# URL
 def build_url(endpoint):
     '''Return URL string, endpoint should not without slash like '/URL' but just 'URL\''''
     return f'https://api.megaventory.com/v2017a/{endpoint}'
@@ -28,7 +29,7 @@ def build_client(name, email, shipping_address, phone):
         'SupplierClientShippingAddress1': shipping_address,
         'SupplierClientPhone1': phone
     },
-        'mvRecordAction': 'Insert'
+        'mvRecordAction': 'Insert',
     }
 
 
@@ -41,5 +42,5 @@ def build_warehouse(name, abbreviation, address):
         'InventoryLocationAbbreviation': abbreviation,
         'InventoryLocationAddress': address
     },
-        'mvRecordAction': 'Insert'
+        'mvRecordAction': 'Insert',
     }

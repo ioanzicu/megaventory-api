@@ -44,21 +44,31 @@ def make_post_request(URL, API_KEY, data):
         raise SystemExit(err)
 
 
-# Add Product                      /Product/ProductUpdate
+# Add Product
 product_URL = build_url('Product/ProductUpdate')
 new_product = build_product('1112256', 'Nike shoes', 99.99, 44.99)
 
 make_post_request(product_URL, API_KEY, new_product)
 
 
-# Add Client                       /SupplierClient/SupplierClientUpdate
+# Add Client
 client_URL = build_url('/SupplierClient/SupplierClientUpdate')
+new_client = build_client('babis', 'babis@exampletest.com',
+                          'Example 8, Athens', '1235698967')
 
-# Add Warehouse                    /InventoryLocation/InventoryLocationUpdate
+make_post_request(client_URL, API_KEY, new_client)
+
+
+# Add Warehouse
 warehouse_URL = build_url('/InventoryLocation/InventoryLocationUpdate')
+new_warehouse = build_warehouse('Main', 'Main Location', 'Example 20, Athens')
 
-# Add Discount                     /Discount/DiscountUpdate
+make_post_request(warehouse_URL, API_KEY, new_warehouse)
+
+
+# Add Discount
 discount_URL = build_url('/Discount/DiscountUpdate')
+
 
 # Create a Sales Order as Verified /PurchaseOrder/PurchaseOrderUpdate
 verified_purchase_URL = build_url('/PurchaseOrder/PurchaseOrderUpdate')
