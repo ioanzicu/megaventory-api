@@ -1,27 +1,35 @@
 import requests
+import json
+from utils import build_url, build_client, build_product, build_warehouse
+
+API_KEY = 'b2bdcde7751b01c7@m115629'
 
 
-API_KEY = 'a74a5edc5a7c3280@m115629'
-
-
-def build_url(endpoint):
-    '''Return URL string, endpoint should not without slash like '/URL' but just 'URL\''''
-    return f'https://api.megaventory.com/v2017a/{endpoint}'
-
-
-def make_post_request(URL, API_KEY):
+def make_post_request(URL, API_KEY, data):
 
     headers = {'Accept': 'application/json'}
-    req = ''
+    params = {'APIKEY': API_KEY}
 
     try:
-        data = {'APIKEY': API_KEY}
-        req = requests.post(url=URL, headers=headers,
-                            data=data)
+        print(json.dumps(data), end='\n\n')
 
-        # req_data = req.text
-        req_data = req.json()
-        print(f'Data: {req_data}')
+        response = requests.post(
+            url=URL, headers=headers, params=params, data=json.dumps(data))
+
+        if response:
+            try:
+                response_json = response.json()
+                if response_json['ResponseStatus']['ErrorCode'] == "400":
+                    print(
+                        f'Request Failed, Error: {response_json["ResponseStatus"]}')
+                else:
+                    print(
+                        f'Data: {response_json}')
+
+            except ValueError as err:
+                print(f'Decoding JSON has failed')
+        else:
+            print(f'Something went wrong, STATUS CODE: {response.status_code}')
 
     except requests.exceptions.HTTPError as err:
         print(f'HTTP Error: {err}')
@@ -32,54 +40,15 @@ def make_post_request(URL, API_KEY):
     except requests.exceptions.TooManyRedirects as err:
         print(f'Bad url {err}')
     except requests.exceptions.RequestException as err:
-        # Fatal error
         print(f'Fatal Error: {err}')
         raise SystemExit(err)
-    except ValueError as err:
-        print(f'Decoding JSON has failed')
-
-
-# /Product/ProductUpdate
-def build_product(SKU, description, sales_price=0.0, purchase_price=0.0):
-    new_product = {
-        'mvProduct': {
-            'ProductSKU': SKU,
-            'ProductDescription': description,
-            'ProductSellingPrice': sales_price,
-            'ProductPurchasePrice': purchase_price
-        },
-        'mvRecordAction': 'Insert'
-    }
-    return new_product
-
-
-# /SupplierClient/SupplierClientUpdate
-def build_client(name, email, shipping_address, phone):
-    return {'mvSupplierClient': {
-        'SupplierClientName': name,
-        'SupplierClientEmail': email,
-        'SupplierClientShippingAddress1': shipping_address,
-        'SupplierClientPhone1': phone
-    },
-        'mvRecordAction': 'Insert'
-    }
-
-
-# /InventoryLocation/InventoryLocationUpdate
-def build_warehouse(name, abbreviation, address):
-    return {'mvInventoryLocation': {
-        'InventoryLocationName': name,
-        'InventoryLocationAbbreviation': abbreviation,
-        'InventoryLocationAddress': address
-    },
-        'mvRecordAction': 'Insert'
-    }
 
 
 # Add Product                      /Product/ProductUpdate
 product_URL = build_url('Product/ProductUpdate')
+new_product = build_product('1112256', 'Nike shoes', 99.99, 44.99)
 
-make_post_request(product_URL, API_KEY)
+make_post_request(product_URL, API_KEY, new_product)
 
 
 # Add Client                       /SupplierClient/SupplierClientUpdate
